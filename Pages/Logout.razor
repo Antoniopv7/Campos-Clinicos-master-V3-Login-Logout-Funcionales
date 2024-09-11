@@ -1,0 +1,12 @@
+@page "/logout"
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Campos_Clinicos.Data
+
+@code {
+    protected override void OnInitialized()
+    {
+        ((CustomAuthStateProvider)AuthenticationStateProvider).MarkUserAsLoggedOut();
+        NavigationManager.NavigateTo("/");
+    }
+}

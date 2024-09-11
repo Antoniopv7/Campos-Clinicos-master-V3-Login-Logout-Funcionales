@@ -1,0 +1,51 @@
+@page "/login"
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AuthService AuthService
+@using Campos_Clinicos.Data
+
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="username">Username:</label>
+        <InputText id="username" @bind-Value="loginModel.Username" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <InputText id="password" @bind-Value="loginModel.Password" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</EditForm>
+
+@code {
+    private class LoginModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
+    private LoginModel loginModel = new LoginModel();
+
+    private async Task HandleLogin()
+    {
+        var result = await AuthService.LoginAsync(loginModel.Username, loginModel.Password);
+        if (result)
+        {
+            // Marca al usuario como autenticado
+            if (AuthenticationStateProvider is CustomAuthStateProvider authStateProvider)
+            {
+                authStateProvider.MarkUserAsAuthenticated(loginModel.Username);
+            }
+
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            // Manejar el error de login (puedes agregar una alerta o mensaje de error aquí)
+        }
+    }
+}
